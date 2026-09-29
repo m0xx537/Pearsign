@@ -12,7 +12,81 @@ async function readRequestBody(request) {
 		if (total > MAX_BODY_BYTES) throw new Error("Request too large");
 		chunks.push(chunk);
 	}
-	return Buffer.concat(chunks).toString("utf8");
+	return Buffer.concat(chunks);
+}
+
+function extractUdid(text) {
+	// Apple normally sends a PKCS#7 signed plist. Some delivery paths wrap that
+	// payload in a form field or base64, so look through those common encodings too.
+	const candidates = [text];
+	const source = Buffer.from(text, "latin1");
+	let visited = 0;
+	const walkAsn1 = (start, limit, depth = 0) => {
+		if (depth > 24 || visited > 4096) return start;
+		let offset = start;
+		while (offset < limit && visited <= 4096) {
+			if (offset + 1 < limit && source[offset] === 0 && source[offset + 1] === 0) return offset + 2;
+			visited += 1;
+			const tag = source[offset++];
+			if ((tag & 0x1f) === 0x1f) {
+				while (offset < limit && (source[offset++] & 0x80) !== 0) {}
+			}
+			if (offset >= limit) break;
+			const firstLength = source[offset++];
+			let length;
+			if (firstLength === 0x80) {
+				if ((tag & 0x20) === 0) break;
+				const contentStart = offset;
+				offset = walkAsn1(offset, limit, depth + 1);
+				if (offset <= contentStart || offset > limit) break;
+				continue;
+			}
+			if ((firstLength & 0x80) === 0) {
+				length = firstLength;
+			} else {
+				const lengthBytes = firstLength & 0x7f;
+				if (lengthBytes === 0 || lengthBytes > 4 || offset + lengthBytes > limit) break;
+				length = 0;
+				for (let index = 0; index < lengthBytes; index += 1) length = length * 256 + source[offset++];
+			}
+			const contentEnd = offset + length;
+			if (contentEnd > limit) break;
+			if ((tag & 0x20) !== 0) {
+				walkAsn1(offset, contentEnd, depth + 1);
+			} else if ((tag & 0xc0) === 0 && (tag & 0x1f) === 0x04 && length > 0) {
+				candidates.push(source.toString("latin1", offset, contentEnd));
+			}
+			offset = contentEnd;
+		}
+		return offset;
+	};
+	if (source.length > 2 && source[0] === 0x30) walkAsn1(0, source.length);
+	const form = new URLSearchParams(text);
+	for (const [key, value] of form) {
+		if (/signeddata|plist|payload|data/i.test(key)) candidates.push(value);
+	}
+
+	for (let index = 0; index < candidates.length; index += 1) {
+		const candidate = candidates[index];
+		const match = candidate.match(/<key>\s*UDID\s*<\/key>\s*<string>\s*([A-Fa-f0-9-]{25,40})\s*<\/string>/i);
+		if (match) {
+			const normalized = match[1].replace(/-/g, "").toUpperCase();
+			if (/^[A-F0-9]{40}$/.test(normalized)) return normalized;
+		}
+
+		// A base64-encoded CMS or plist is ASCII in the outer request. Decode only
+		// plausible payloads and inspect them as Latin-1 so embedded XML is retained.
+		const encoded = candidate.replace(/\s/g, "");
+		if (encoded.length >= 80 && encoded.length % 4 === 0 && /^[A-Za-z0-9+/=]+$/.test(encoded)) {
+			try {
+				const decoded = Buffer.from(encoded, "base64").toString("latin1");
+				if (decoded !== candidate) candidates.push(decoded);
+			} catch {
+				// Ignore unrelated or malformed form fields.
+			}
+		}
+	}
+	return null;
 }
 
 function page(response, status, heading, message, showLink = false) {
@@ -38,14 +112,14 @@ module.exports = async function udidCallback(request, response) {
 	const token = requestURL.searchParams.get("token") || "";
 	if (!/^[a-f0-9]{64}$/.test(token)) return page(response, 400, "Request expired", "Start a new UDID request from your Pearsign account.");
 
-	let plist;
+	let body;
 	try {
-		plist = await readRequestBody(request);
+		body = await readRequestBody(request);
 	} catch {
 		return page(response, 413, "Request too large", "The device response could not be processed.");
 	}
-	const udidMatch = plist.match(/<key>\s*UDID\s*<\/key>\s*<string>\s*([A-Fa-f0-9]{40})\s*<\/string>/i);
-	if (!udidMatch) return page(response, 400, "UDID not found", "The device did not return a supported UDID. Start a new request and try again from Safari.");
+	const udid = extractUdid(body.toString("latin1"));
+	if (!udid) return page(response, 400, "UDID not found", "Apple’s device response could not be read. Start a new request from your Pearsign account and try again in Safari.");
 
 	try {
 		const completion = await fetch(`${supabaseURL()}/rest/v1/rpc/complete_pear_sign_udid_enrollment`, {
@@ -57,7 +131,7 @@ module.exports = async function udidCallback(request, response) {
 			},
 			body: JSON.stringify({
 				p_token_hash: createHash("sha256").update(token).digest("hex"),
-				p_udid: udidMatch[1].toUpperCase(),
+				p_udid: udid,
 			}),
 		});
 		if (!completion.ok) return page(response, 503, "Could not save this UDID", "Pearsign could not save the device response. Please start a new request from your account.");
