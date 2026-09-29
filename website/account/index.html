@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7faff">
+  <meta name="description" content="Create or access your Pearsign account.">
+  <title>Pearsign account</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23187df5'/%3E%3Cpath d='M32 17c-5 0-7 7-7 12-7 4-12 11-12 19 0 9 8 13 19 13s19-4 19-13c0-8-5-15-12-19 0-5-2-12-7-12z' fill='white'/%3E%3Cpath d='M32 17c1-5 5-8 10-9' fill='none' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+  <style>
+    :root{color-scheme:light;--ink:#10203b;--muted:#66758c;--blue:#126ff2;--line:#e5ecf5;--paper:#f4f8fd;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-synthesis:none;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased}*{box-sizing:border-box}body{margin:0;min-height:100vh;color:var(--ink);background:radial-gradient(ellipse 65% 52% at 50% 0,#dfedff 0,transparent 73%),var(--paper)}a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid #31c9e8;outline-offset:3px}.wrap{width:min(1100px,calc(100% - 44px));margin:auto}.top{height:82px;display:flex;align-items:center}.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-size:21px;font-weight:780;letter-spacing:-.7px}.brand img{width:39px;height:39px;border-radius:13px;box-shadow:0 5px 12px #1550a51c}.back{margin-left:auto;text-decoration:none;color:#52647c;font-size:14px;font-weight:650}.layout{min-height:calc(100vh - 154px);padding:36px 0 65px;display:grid;grid-template-columns:1fr 450px;gap:72px;align-items:center}.story .eyebrow{font-size:12px;letter-spacing:1.4px;text-transform:uppercase;font-weight:760;color:#1b6ede}.story h1{font-size:54px;letter-spacing:-3px;line-height:1.02;margin:17px 0}.story p{font-size:17px;line-height:1.68;color:var(--muted);max-width:430px;margin:0}.perks{display:grid;gap:13px;margin-top:29px;color:#52647c;font-size:14px}.perk{display:flex;align-items:center;gap:11px}.check{width:26px;height:26px;display:grid;place-items:center;border-radius:9px;color:#1471e8;background:#e4f1ff;font-size:13px;font-weight:800}.card{background:white;border:1px solid #e7edf6;border-radius:25px;padding:30px;box-shadow:0 24px 65px #23477717}.card-brand{display:flex;align-items:center;gap:10px;font-weight:770;font-size:14px}.card-brand img{width:31px;height:31px;border-radius:10px}.card h2{font-size:26px;letter-spacing:-1px;margin:20px 0 7px}.card-desc{margin:0 0 20px;color:var(--muted);font-size:14px;line-height:1.55}.switch{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border-radius:12px;background:#f1f5fb;margin-bottom:21px}.switch button{height:38px;border:0;border-radius:9px;background:transparent;color:#6e7c91;font:inherit;font-size:13px;font-weight:650;cursor:pointer}.switch button.active{background:white;color:#145cce;box-shadow:0 1px 5px #12365c16}.field{display:grid;gap:8px;margin:15px 0}.field[hidden],.help-row[hidden]{display:none}.field label{font-size:13px;font-weight:650;color:#33445e}.field input{width:100%;height:47px;padding:0 13px;border:1px solid #dbe4ef;border-radius:12px;background:#fff;color:#10203b;font:inherit;font-size:15px}.field input::placeholder{color:#a0aab9}.help-row{display:flex;justify-content:flex-end;margin-top:-4px}.text-button{border:0;padding:5px 0;background:none;color:#216bd3;font:inherit;font-size:13px;font-weight:600;cursor:pointer}.submit{border:0;width:100%;height:49px;margin-top:18px;border-radius:13px;background:linear-gradient(110deg,#198df6,#145ce1);box-shadow:0 9px 20px #146de62b;color:white;font:inherit;font-size:15px;font-weight:720;cursor:pointer}.submit:disabled{opacity:.58;cursor:wait}.notice{display:none;margin-top:17px;padding:12px 13px;border-radius:12px;font-size:13px;line-height:1.5}.notice.show{display:block}.notice.error{background:#fff0ef;color:#a6332d}.notice.success{background:#eaf8f1;color:#176d4d}.notice.info{background:#edf5ff;color:#225d9e}.terms{margin:16px 0 0;text-align:center;font-size:11px;line-height:1.55;color:#8490a1}.terms a{color:#506b91}.account-view{display:none}.account-view.show{display:block}.auth-view.hide{display:none}.account-email{font-size:15px;font-weight:650;overflow-wrap:anywhere;margin:0 0 17px}.status-card{border:1px solid var(--line);border-radius:15px;background:#f8faff;padding:15px;margin:17px 0}.status-card b{font-size:13px;display:block}.status-card p{font-size:13px;line-height:1.55;color:var(--muted);margin:7px 0 0}.signout{margin-top:14px;border:1px solid #dfe7f2;background:white;color:#41536c;padding:10px 15px;border-radius:11px;font:inherit;font-size:13px;font-weight:650;cursor:pointer}.footer{min-height:72px;border-top:1px solid #e5ecf4;background:#ffffff9c;display:flex;align-items:center;justify-content:center;padding:16px 20px;text-align:center;color:#8390a1;font-size:12px}.footer a{color:#55708e;text-decoration:none;margin-left:10px}@media(max-width:800px){.layout{grid-template-columns:1fr;gap:28px;max-width:520px;padding:30px 0 55px}.story h1{font-size:43px;letter-spacing:-2.4px}.story p{font-size:16px}.perks{grid-template-columns:1fr 1fr;font-size:12px;gap:10px}.check{flex:none}.card{padding:24px}.top{height:72px}}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+  </style>
+</head>
+<body>
+  <header class="wrap top"><a class="brand" href="/"><img src="/pear.png" alt=""><span>Pearsign</span></a><a class="back" href="/">← Back to home</a></header>
+  <main class="wrap layout">
+    <section class="story"><div class="eyebrow">One account for Pearsign</div><h1>Your signing setup,<br>all together.</h1><p>Create your Pearsign account to get ready for account-linked certificate access. Certificate purchases and delivery are not connected yet.</p><div class="perks"><div class="perk"><span class="check">✓</span>Email-verified sign-up</div><div class="perk"><span class="check">✓</span>Password reset</div><div class="perk"><span class="check">✓</span>Sign in on the web</div><div class="perk"><span class="check">✓</span>Ready for app linking</div></div></section>
+    <section class="card" aria-label="Pearsign account access">
+      <div class="card-brand"><img src="/pear.png" alt=""><span>Pearsign account</span></div>
+      <div class="auth-view" id="auth-view">
+        <h2 id="form-heading">Welcome back</h2><p class="card-desc" id="form-description">Sign in to your Pearsign account.</p>
+        <div class="switch" role="tablist" aria-label="Account access">
+          <button class="active" type="button" role="tab" aria-selected="true" id="login-tab">Sign in</button>
+          <button type="button" role="tab" aria-selected="false" id="signup-tab">Create account</button>
+        </div>
+        <form id="auth-form">
+          <div class="field"><label for="email">Email address</label><input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required></div>
+          <div class="field"><label for="password">Password</label><input id="password" name="password" type="password" autocomplete="current-password" minlength="8" placeholder="At least 8 characters" required></div>
+          <div class="field" id="confirm-field" hidden><label for="confirm-password">Confirm password</label><input id="confirm-password" name="confirm-password" type="password" autocomplete="new-password" minlength="8" placeholder="Enter your password again"></div>
+          <div class="help-row" id="forgot-row"><button class="text-button" id="forgot-button" type="button">Forgot password?</button></div>
+          <button class="submit" id="submit-button" type="submit">Sign in</button>
+        </form>
+        <div class="notice" id="notice" role="status" aria-live="polite"></div>
+        <p class="terms">Pearsign uses Supabase to authenticate your account. Pearsign does not receive or store your password.</p>
+      </div>
+      <div class="account-view" id="account-view">
+        <h2>You’re signed in</h2><p class="card-desc">Your Pearsign account is ready.</p>
+        <p class="account-email" id="signed-in-email"></p>
+        <div class="status-card"><b>Certificate access is still in development</b><p>There are no certificate purchases linked to this account yet. We’ll connect purchase and certificate delivery after those services are ready.</p></div>
+        <button class="signout" id="signout-button" type="button">Sign out</button>
+        <div class="notice" id="account-notice" role="status" aria-live="polite"></div>
+      </div>
+    </section>
+  </main>
+  <footer class="footer">Pearsign is in development. <a href="/">Learn how it works</a></footer>
+  <script type="module" src="./account.js"></script>
+</body>
+</html>
