@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7faff">
+  <meta name="description" content="Pearsign brings your iOS signing account, certificate and app library together in one clear experience.">
+  <title>Pearsign — your apps, your way</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23187df5'/%3E%3Cpath d='M32 17c-5 0-7 7-7 12-7 4-12 11-12 19 0 9 8 13 19 13s19-4 19-13c0-8-5-15-12-19 0-5-2-12-7-12z' fill='white'/%3E%3Cpath d='M32 17c1-5 5-8 10-9' fill='none' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+  <style>
+    :root{color-scheme:light;--ink:#10203b;--muted:#61718b;--blue:#126ff2;--blue-dark:#0750d2;--cyan:#3ad6f2;--line:#e6edf7;--pale:#f5f8fd;--white:#fff;--green:#168c65;--shadow:0 24px 70px rgba(30,76,145,.12);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-synthesis:none;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--pale);color:var(--ink)}a{color:inherit}button,a{-webkit-tap-highlight-color:transparent}a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid #27bce8;outline-offset:4px}.wrap{width:min(1160px,calc(100% - 48px));margin-inline:auto}.topbar{height:84px;display:flex;align-items:center;justify-content:space-between}.brand{display:flex;align-items:center;gap:11px;text-decoration:none;font-size:21px;font-weight:780;letter-spacing:-.7px}.brand img{width:40px;height:40px;border-radius:13px;box-shadow:0 5px 12px #1550a51c}.navlinks{display:flex;align-items:center;gap:34px}.navlinks>a:not(.button){font-size:14px;font-weight:600;color:#52647f;text-decoration:none}.navlinks>a:not(.button):hover{color:var(--blue)}.button{min-height:48px;padding:0 21px;border-radius:14px;display:inline-flex;align-items:center;justify-content:center;gap:9px;font-size:14px;font-weight:720;text-decoration:none;transition:transform .18s ease,box-shadow .18s ease,background .18s ease}.button:hover{transform:translateY(-2px)}.button-primary{color:white;background:linear-gradient(110deg,#198df6,#145ce1);box-shadow:0 9px 20px #146de634}.button-primary:hover{box-shadow:0 13px 26px #146de644}.button-quiet{color:var(--ink);background:#ffffffd9;border:1px solid #dce7f5}.mobile-nav{display:none}.hero{padding:72px 0 78px;position:relative;overflow:hidden;background:radial-gradient(ellipse 55% 80% at 84% 25%,#d9efff 0,transparent 75%),linear-gradient(180deg,#f7faff,#f0f6ff)}.hero:before{position:absolute;content:"";width:560px;height:560px;border:1px solid #c8defa55;border-radius:50%;right:-150px;top:-260px;box-shadow:0 0 0 48px #d4e6fb22,0 0 0 98px #d4e6fb18}.hero-grid{display:grid;grid-template-columns:1fr 470px;gap:62px;align-items:center;position:relative}.eyebrow{display:inline-flex;align-items:center;gap:9px;color:#1b6ede;font-size:12px;font-weight:790;letter-spacing:1.45px;text-transform:uppercase}.eyebrow:before{content:"";width:23px;height:2px;background:linear-gradient(90deg,var(--cyan),var(--blue));border-radius:3px}.hero h1{font-size:clamp(48px,6vw,72px);letter-spacing:-4.3px;line-height:.99;margin:21px 0 21px;max-width:650px}.hero h1 span{color:var(--blue)}.hero-copy{max-width:515px;color:var(--muted);font-size:18px;line-height:1.66;margin:0}.hero-actions{display:flex;gap:12px;margin-top:31px;flex-wrap:wrap}.fineprint{margin-top:20px;display:flex;align-items:center;gap:9px;color:#75839a;font-size:13px}.fineprint .dot{width:8px;height:8px;border-radius:50%;background:#49c5b1;box-shadow:0 0 0 4px #49c5b11f}.preview-wrap{position:relative;padding:17px}.orb{position:absolute;width:230px;height:230px;border-radius:50%;background:linear-gradient(140deg,#52e5f4,#4d8cf5);filter:blur(2px);opacity:.18;right:-25px;top:-26px}.device{height:438px;position:relative;border:7px solid #172138;border-radius:38px;background:#f7f9fd;box-shadow:0 35px 80px #1435672c;overflow:hidden;padding:24px 19px 74px}.device-top{display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:760;margin:0 4px 20px}.device-title{font-size:18px;font-weight:780;letter-spacing:-.5px;margin:0 0 13px}.device-card{background:linear-gradient(130deg,#42d8f2,#1889f5 55%,#0649d3);border-radius:19px;height:125px;padding:17px;color:white;position:relative;overflow:hidden}.device-card:after{content:"";position:absolute;width:145px;height:145px;right:-24px;top:-30px;border-radius:50%;background:#ffffff32}.device-card small{font-size:9px;letter-spacing:1.3px;font-weight:800;opacity:.85}.device-card strong{display:block;margin-top:12px;font-size:20px;line-height:1.05;letter-spacing:-.5px;position:relative;z-index:1}.device-card img{position:absolute;width:91px;height:91px;object-fit:cover;border-radius:26px;right:9px;bottom:7px;z-index:2;box-shadow:0 8px 18px #073c9145}.device-label{font-size:12px;font-weight:760;margin:18px 1px 10px}.cert-mini{height:64px;background:white;border:1px solid #e9eef6;border-radius:15px;padding:10px;display:flex;gap:10px;align-items:center}.mini-icon{width:37px;height:37px;border-radius:12px;background:#e8f3ff;color:#1372eb;display:grid;place-items:center;font-size:17px}.cert-mini b{font-size:10px;display:block}.cert-mini small{font-size:9px;color:#7d899b;display:block;margin-top:4px}.badge{margin-left:auto;padding:5px 7px;border-radius:99px;color:#8a6b20;background:#fff6d8;font-size:8px;font-weight:800;letter-spacing:.3px}.quick-row{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}.quick{padding:12px 10px;border:1px solid #e9eef6;border-radius:14px;background:white;font-size:10px;font-weight:720}.quick span{display:block;color:#8794a8;font-size:9px;font-weight:500;margin-top:4px}.device-tabs{position:absolute;bottom:0;left:0;right:0;height:60px;display:flex;justify-content:space-around;align-items:center;background:#fffffff2;border-top:1px solid #e9edf4}.device-tab{font-size:8px;color:#8794a8;text-align:center;display:grid;gap:4px;justify-items:center}.device-tab i{font-style:normal;font-size:15px;line-height:14px}.device-tab.active{color:var(--blue);font-weight:750}.device-tab.active i{background:#e8f2ff;padding:4px 13px;border-radius:9px}.preview-caption{position:absolute;bottom:-1px;left:27px;padding:11px 15px;background:white;border:1px solid #e5edf8;border-radius:12px;box-shadow:0 10px 24px #18385f14;font-size:11px;font-weight:720;color:#536781}.preview-caption span{color:var(--green);margin-right:7px}.trustline{border-top:1px solid #e3ebf5;border-bottom:1px solid #e3ebf5;background:#ffffffa6}.trust-grid{display:grid;grid-template-columns:repeat(3,1fr);padding:20px 0}.trust-item{display:flex;align-items:center;justify-content:center;gap:11px;color:#5e708b;font-size:13px;font-weight:620}.trust-item+ .trust-item{border-left:1px solid #e4eaf3}.trust-item b{width:29px;height:29px;border-radius:10px;background:#e9f4ff;color:#1973e8;display:grid;place-items:center;font-size:15px}.section{padding:95px 0}.section-head{text-align:center;max-width:660px;margin:0 auto 42px}.section-head .eyebrow{justify-content:center}.section-head h2{font-size:clamp(32px,4vw,44px);line-height:1.08;letter-spacing:-1.8px;margin:16px 0}.section-head p{font-size:16px;line-height:1.65;color:var(--muted);margin:0}.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.step{padding:25px 24px 24px;background:white;border:1px solid var(--line);border-radius:21px;min-height:205px;box-shadow:0 9px 27px #143d7608;position:relative}.step-number{height:36px;width:36px;border-radius:12px;background:linear-gradient(145deg,#e1faff,#e2edff);display:grid;place-items:center;font-size:13px;font-weight:820;color:#136fe6}.step h3{font-size:18px;letter-spacing:-.4px;margin:18px 0 8px}.step p{font-size:14px;line-height:1.6;color:var(--muted);margin:0}.step-arrow{position:absolute;right:22px;top:28px;color:#b1c2d9;font-size:17px}.account-band{padding:0 0 98px}.account-card{position:relative;overflow:hidden;border-radius:29px;padding:46px 50px;background:linear-gradient(112deg,#0d53d7,#147ff0 62%,#36c9ed);color:white;display:flex;align-items:center;justify-content:space-between;gap:38px;box-shadow:0 23px 54px #1159c32b}.account-card:after{content:"";position:absolute;width:350px;height:350px;border:1px solid #ffffff32;border-radius:50%;right:140px;top:-210px;box-shadow:0 0 0 38px #ffffff10,0 0 0 78px #ffffff0b}.account-text{position:relative;z-index:1;max-width:635px}.account-text .eyebrow{color:#d9f8ff}.account-text h2{font-size:35px;letter-spacing:-1.2px;line-height:1.08;margin:14px 0 11px}.account-text p{color:#e0efff;font-size:15px;line-height:1.6;margin:0}.account-card .button{position:relative;z-index:2;flex:none;color:#125ed7;background:white;box-shadow:0 8px 22px #06368535}.footer{padding:27px 0 34px;border-top:1px solid var(--line);background:#fff}.footer-inner{display:flex;align-items:center;justify-content:space-between;gap:22px}.footer-brand{display:flex;align-items:center;gap:9px;font-size:15px;font-weight:760}.footer-brand img{width:29px;height:29px;border-radius:9px}.footer-note{font-size:12px;color:#7c899d}.footer-links{display:flex;gap:19px}.footer-links a{color:#65748b;text-decoration:none;font-size:12px}.footer-links a:hover{color:var(--blue)}
+    @media(max-width:950px){.hero-grid{grid-template-columns:1fr 390px;gap:28px}.hero h1{font-size:58px}.device{height:420px}.account-card{padding:38px}.account-text h2{font-size:30px}}
+    @media(max-width:760px){.wrap{width:min(100% - 36px,560px)}.topbar{height:72px}.navlinks{display:none}.mobile-nav{display:block;position:relative}.mobile-nav summary{list-style:none;width:42px;height:42px;border-radius:13px;background:#fff;border:1px solid var(--line);display:grid;place-items:center;color:var(--blue);font-size:21px;cursor:pointer}.mobile-nav summary::-webkit-details-marker{display:none}.mobile-nav[open] .mobile-menu{display:grid}.mobile-menu{display:none;position:absolute;z-index:8;right:0;top:49px;width:200px;padding:9px;background:white;border:1px solid var(--line);border-radius:15px;box-shadow:var(--shadow)}.mobile-menu a{padding:12px 10px;text-decoration:none;font-size:14px;font-weight:650;border-radius:9px}.mobile-menu a:hover{background:#f2f7ff}.mobile-menu .button{margin-top:3px;color:white}.hero{padding:50px 0 59px}.hero-grid{grid-template-columns:1fr;gap:31px}.hero h1{font-size:clamp(48px,13vw,64px);letter-spacing:-3.2px;margin-top:17px}.hero-copy{font-size:16px;line-height:1.62}.hero-actions{margin-top:24px}.button{min-height:46px}.preview-wrap{width:min(100%,410px);justify-self:center;padding:12px 12px 20px}.device{height:403px}.preview-caption{left:19px;bottom:1px}.trust-grid{grid-template-columns:1fr;padding:8px 0}.trust-item{justify-content:flex-start;padding:12px 5px}.trust-item+.trust-item{border-left:0;border-top:1px solid #e4eaf3}.section{padding:72px 0}.section-head{margin-bottom:28px}.section-head h2{font-size:34px;letter-spacing:-1.3px}.section-head p{font-size:15px}.steps{grid-template-columns:1fr;gap:12px}.step{min-height:auto;padding:20px}.step h3{margin-top:14px}.account-band{padding-bottom:72px}.account-card{padding:30px 24px;align-items:flex-start;flex-direction:column;gap:23px;border-radius:24px}.account-card:after{right:-210px}.account-text h2{font-size:30px}.footer-inner{align-items:flex-start;flex-direction:column}.footer-links{gap:17px;flex-wrap:wrap}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important}}
+  </style>
+</head>
+<body>
+  <header class="wrap topbar">
+    <a class="brand" href="#top" aria-label="Pearsign home"><img src="pear.png" alt=""><span>Pearsign</span></a>
+    <nav class="navlinks" aria-label="Main navigation">
+      <a href="#how-it-works">How it works</a>
+      <a href="#the-app">The app</a>
+      <a href="#account">Account</a>
+      <a class="button button-primary" href="#account">Get updates <span aria-hidden="true">↗</span></a>
+    </nav>
+    <details class="mobile-nav">
+      <summary aria-label="Open navigation">☰</summary>
+      <nav class="mobile-menu" aria-label="Mobile navigation">
+        <a href="#how-it-works">How it works</a>
+        <a href="#the-app">The app</a>
+        <a href="#account">Account</a>
+        <a class="button button-primary" href="#account">Get updates ↗</a>
+      </nav>
+    </details>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div>
+          <div class="eyebrow">A simpler way to sideload</div>
+          <h1>Your apps,<br><span>your way.</span></h1>
+          <p class="hero-copy">Discover apps, manage your signing certificate, and install the apps you choose—all in one clear Pearsign experience.</p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#how-it-works">See how it works <span aria-hidden="true">↓</span></a>
+            <a class="button button-quiet" href="#the-app">Explore the app <span aria-hidden="true">→</span></a>
+          </div>
+          <div class="fineprint"><span class="dot" aria-hidden="true"></span>Built around your device and your certificate</div>
+        </div>
+        <div class="preview-wrap" id="the-app" aria-label="Preview of the Pearsign app">
+          <div class="orb" aria-hidden="true"></div>
+          <div class="device">
+            <div class="device-top"><span>9:41</span><span>● &nbsp;▮▮▮</span></div>
+            <div class="device-title">Good to see you.</div>
+            <div class="device-card"><small>YOUR SIGNING SPACE</small><strong>Your apps,<br>your way.</strong><img src="pear.png" alt="Pearsign logo"></div>
+            <div class="device-label">Certificate</div>
+            <div class="cert-mini"><div class="mini-icon" aria-hidden="true">▣</div><div><b>Connect your account</b><small>Your certificate will appear here</small></div><span class="badge">IN DEVELOPMENT</span></div>
+            <div class="device-label">Quick actions</div>
+            <div class="quick-row"><div class="quick">◎ Browse sources<span>Discover apps</span></div><div class="quick">＋ Import IPA<span>Choose an app</span></div></div>
+            <div class="device-tabs" aria-label="App tabs preview">
+              <div class="device-tab active"><i>⌂</i>Home</div><div class="device-tab"><i>◎</i>Sources</div><div class="device-tab"><i>▦</i>Library</div><div class="device-tab"><i>♙</i>Account</div><div class="device-tab"><i>⚙</i>Settings</div>
+            </div>
+          </div>
+          <div class="preview-caption"><span aria-hidden="true">●</span>Pearsign app preview</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="trustline"><div class="wrap trust-grid">
+      <div class="trust-item"><b aria-hidden="true">⌂</b>Made for iPhone and iPad</div>
+      <div class="trust-item"><b aria-hidden="true">⌘</b>Signing tools in one place</div>
+      <div class="trust-item"><b aria-hidden="true">◈</b>Your account, your certificate</div>
+    </div></div>
+
+    <section class="section" id="how-it-works">
+      <div class="wrap">
+        <div class="section-head"><div class="eyebrow">From account to installed app</div><h2>Everything has a place.</h2><p>Pearsign is being built to make the steps around sideloading feel simpler and easier to follow.</p></div>
+        <div class="steps">
+          <article class="step"><div class="step-number">01</div><span class="step-arrow" aria-hidden="true">↗</span><h3>Set up your account</h3><p>Create a Pearsign account to keep your certificate and signing setup connected.</p></article>
+          <article class="step"><div class="step-number">02</div><span class="step-arrow" aria-hidden="true">↗</span><h3>Connect your certificate</h3><p>Your certificate files are intended to be available inside the Pearsign app after setup.</p></article>
+          <article class="step"><div class="step-number">03</div><h3>Sign and install</h3><p>Choose an app from a source or your files, sign it, and install it on your device.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="account-band" id="account">
+      <div class="wrap"><div class="account-card">
+        <div class="account-text"><div class="eyebrow">Pearsign is in development</div><h2>Account and certificate access are coming.</h2><p>The app interface is taking shape. Account sign-in, certificate purchases, and certificate delivery will be enabled when Pearsign’s secure account service is ready.</p></div>
+        <a class="button" href="#top">Back to Pearsign <span aria-hidden="true">↑</span></a>
+      </div></div>
+    </section>
+  </main>
+
+  <footer class="footer"><div class="wrap footer-inner">
+    <div class="footer-brand"><img src="pear.png" alt=""><span>Pearsign</span></div>
+    <div class="footer-note">A clearer home for your iOS apps.</div>
+    <nav class="footer-links" aria-label="Footer navigation"><a href="#how-it-works">How it works</a><a href="#the-app">The app</a><a href="#account">Account status</a></nav>
+  </div></footer>
+</body>
+</html>
