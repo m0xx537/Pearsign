@@ -29,7 +29,7 @@ struct AppearanceView: View {
 	]
 	
 	@AppStorage("Feather.userTintColor")
-	private var _selectedColorHex: String = "#848ef9"
+	private var _selectedColorHex: String = "#197AFB"
 	
 	private var _tintColorBinding: Binding<Color> {
 		Binding(
@@ -43,7 +43,7 @@ struct AppearanceView: View {
 		NBList(.localized("Appearance")) {
 			Section {
 				Picker(.localized("Appearance"), selection: $_userIntefacerStyle) {
-					ForEach(UIUserInterfaceStyle.allCases.sorted(by: { $0.rawValue < $1.rawValue }), id: \.rawValue) { style in
+				ForEach([UIUserInterfaceStyle.unspecified, .light, .dark], id: \.rawValue) { style in
 						Text(style.label).tag(style.rawValue)
 					}
 				}
