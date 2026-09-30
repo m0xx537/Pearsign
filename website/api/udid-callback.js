@@ -68,10 +68,11 @@ function extractUdid(text) {
 
 	for (let index = 0; index < candidates.length; index += 1) {
 		const candidate = candidates[index];
-		const match = candidate.match(/<key>\s*UDID\s*<\/key>\s*<string>\s*([A-Fa-f0-9-]{25,40})\s*<\/string>/i);
+		const match = candidate.match(/<key>\s*UDID\s*<\/key>\s*<string>\s*([A-Fa-f0-9]{40}|[A-Fa-f0-9]{8}-[A-Fa-f0-9]{16})\s*<\/string>/i);
 		if (match) {
-			const normalized = match[1].replace(/-/g, "").toUpperCase();
-			if (/^[A-F0-9]{40}$/.test(normalized)) return normalized;
+			// Newer devices use eight hex characters, a hyphen, then sixteen hex
+			// characters. Preserve that hyphen: it is part of Apple's identifier.
+			return match[1].toUpperCase();
 		}
 
 		// A base64-encoded CMS or plist is ASCII in the outer request. Decode only
@@ -137,7 +138,12 @@ module.exports = async function udidCallback(request, response) {
 		if (!completion.ok) return page(response, 503, "Could not save this UDID", "Pearsign could not save the device response. Please start a new request from your account.");
 		const saved = await completion.json();
 		if (saved !== true) return page(response, 410, "Request expired", "This one-time UDID request has expired or was already used. Start a new one from your Pearsign account.");
-		return page(response, 200, "UDID saved to Pearsign", "The UDID was saved to the Pearsign account that started this request. You can return to your account now.", true);
+		// Finish the Profile Service exchange by returning to Safari with a GET.
+		// A 200 HTML response here can be mistaken for another configuration profile.
+		response.statusCode = 303;
+		response.setHeader("Location", new URL("/account/?udid=saved", process.env.PEARSIGN_SITE_URL || "https://pear-sign.com").toString());
+		response.setHeader("Referrer-Policy", "no-referrer");
+		return response.end();
 	} catch {
 		return page(response, 503, "Could not save this UDID", "Pearsign could not reach account storage. Please start a new request from your account.");
 	}

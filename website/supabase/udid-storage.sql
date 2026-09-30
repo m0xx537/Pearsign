@@ -1,11 +1,21 @@
 -- Run this once in Supabase Dashboard → SQL Editor.
 -- Stores one validated device UDID per signed-in Pearsign account.
 
+begin;
+
 create table if not exists public.pear_sign_device_udids (
   user_id uuid primary key references auth.users (id) on delete cascade,
-  udid text not null check (udid ~ '^[A-F0-9]{40}$'),
+  udid text not null check (udid ~ '^([A-F0-9]{40}|[A-F0-9]{8}-[A-F0-9]{16})$'),
   created_at timestamptz not null default now()
 );
+
+-- Upgrade existing installations too; CREATE TABLE IF NOT EXISTS alone does
+-- not replace the old 40-character-only constraint. Existing rows are retained.
+alter table public.pear_sign_device_udids
+  drop constraint if exists pear_sign_device_udids_udid_check;
+alter table public.pear_sign_device_udids
+  add constraint pear_sign_device_udids_udid_check
+  check (udid ~ '^([A-F0-9]{40}|[A-F0-9]{8}-[A-F0-9]{16})$');
 
 alter table public.pear_sign_device_udids enable row level security;
 
@@ -57,7 +67,7 @@ as $$
 declare
   requested_user_id uuid;
 begin
-  if p_udid !~ '^[A-F0-9]{40}$' then
+  if p_udid is null or p_udid !~ '^([A-F0-9]{40}|[A-F0-9]{8}-[A-F0-9]{16})$' then
     return false;
   end if;
 
@@ -79,3 +89,5 @@ $$;
 
 revoke all on function public.complete_pear_sign_udid_enrollment(text, text) from public, anon, authenticated;
 grant execute on function public.complete_pear_sign_udid_enrollment(text, text) to service_role;
+
+commit;

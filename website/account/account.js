@@ -145,8 +145,8 @@ udidForm.addEventListener("submit", async (event) => {
 	event.preventDefault();
 	if (!supabase || !signedInUser) return showNotice(accountNotice, "Sign in to save a UDID to your Pearsign account.", "error");
 	const udid = udidInput.value.trim().toUpperCase();
-	if (!/^[A-F0-9]{40}$/.test(udid)) {
-		udidInput.setCustomValidity("Enter a 40-character hexadecimal UDID.");
+	if (!/^(?:[A-F0-9]{40}|[A-F0-9]{8}-[A-F0-9]{16})$/.test(udid)) {
+		udidInput.setCustomValidity("Enter a 25-character UDID with its hyphen, or a 40-character hexadecimal UDID.");
 		udidInput.reportValidity();
 		udidInput.setCustomValidity("");
 		return;
