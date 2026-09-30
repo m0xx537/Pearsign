@@ -22,6 +22,7 @@ let mode = new URLSearchParams(window.location.search).get("flow") === "recovery
 let supabase;
 let signedInUser = null;
 let udidLoadVersion = 0;
+let pendingUdidProfile = null;
 
 function showNotice(element, message, kind = "info") {
 	if (!element) return;
@@ -112,6 +113,7 @@ document.querySelector("#signout-button").addEventListener("click", async () => 
 });
 
 udidAutoButton.addEventListener("click", async () => {
+	if (udidAutoButton.disabled) return;
 	if (!supabase || !signedInUser) return showNotice(accountNotice, "Sign in to start a UDID request for your Pearsign account.", "error");
 	const userAgent = navigator.userAgent;
 	const isIOS = /iPhone|iPad|iPod/.test(userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
@@ -122,6 +124,11 @@ udidAutoButton.addEventListener("click", async () => {
 	udidAutoButton.disabled = true;
 	udidAutoButton.textContent = "Preparing request…";
 	try {
+		if (pendingUdidProfile?.userId === signedInUser.id && pendingUdidProfile.expiresAt > Date.now()) {
+			showNotice(accountNotice, "Download ready. Open Settings → Profile Downloaded and install the Pearsign request within 15 minutes, then return here.", "info");
+			window.location.assign(pendingUdidProfile.url);
+			return;
+		}
 		const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 		if (sessionError || !session?.access_token) return showNotice(accountNotice, "Your Pearsign session expired. Sign in again and retry.", "error");
 		const result = await fetch("/api/udid-profile", {
@@ -132,6 +139,8 @@ udidAutoButton.addEventListener("click", async () => {
 		if (!result.ok || !payload.profileUrl) return showNotice(accountNotice, payload.error || "Could not start the UDID request. Please try again.", "error");
 		const profileURL = new URL(payload.profileUrl, window.location.origin);
 		if (profileURL.origin !== window.location.origin) return showNotice(accountNotice, "Pearsign returned an invalid profile link. Please contact support.", "error");
+		pendingUdidProfile = { userId: signedInUser.id, url: profileURL.toString(), expiresAt: Date.parse(payload.expiresAt) };
+		showNotice(accountNotice, "Download ready. Open Settings → Profile Downloaded and install the Pearsign request within 15 minutes, then return here.", "info");
 		window.location.assign(profileURL.toString());
 	} catch {
 		showNotice(accountNotice, "We couldn’t reach Pearsign account services. Please try again.", "error");
@@ -219,6 +228,7 @@ async function loadSavedUDID(user) {
 		return;
 	}
 	if (data?.udid) {
+		pendingUdidProfile = null;
 		udidInput.value = data.udid;
 		udidRemoveButton.hidden = false;
 		document.querySelector("#udid-manual-summary").textContent = "UDID saved to this account · Edit or remove";
@@ -238,6 +248,7 @@ function renderSession(session) {
 	signedInUser = user;
 	if (isSignedIn) document.querySelector("#signed-in-email").textContent = user.email ?? "Pearsign account";
 	else {
+		pendingUdidProfile = null;
 		udidLoadVersion += 1;
 		udidInput.value = "";
 		udidRemoveButton.hidden = true;

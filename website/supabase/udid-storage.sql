@@ -43,18 +43,24 @@ create policy "Users can remove their own device UDID"
   on public.pear_sign_device_udids for delete to authenticated
   using ((select auth.uid()) = user_id);
 
--- Short-lived, one-time links associate Apple's profile response with the
+-- Short-lived, device-bound links associate Apple's profile response with the
 -- account that requested it. Only the server's Supabase secret key can use this table.
 create table if not exists public.pear_sign_udid_enrollments (
   token_hash text primary key check (token_hash ~ '^[a-f0-9]{64}$'),
   user_id uuid not null references auth.users (id) on delete cascade,
   expires_at timestamptz not null,
-  created_at timestamptz not null default now()
+  created_at timestamptz not null default now(),
+  completed_udid text,
+  completed_at timestamptz
 );
 
 alter table public.pear_sign_udid_enrollments enable row level security;
-create unique index if not exists pear_sign_udid_enrollments_user_id_key
-  on public.pear_sign_udid_enrollments (user_id);
+alter table public.pear_sign_udid_enrollments
+  add column if not exists completed_udid text,
+  add column if not exists completed_at timestamptz;
+drop index if exists public.pear_sign_udid_enrollments_user_id_key;
+create index if not exists pear_sign_udid_enrollments_expires_at_idx
+  on public.pear_sign_udid_enrollments (expires_at);
 revoke all on table public.pear_sign_udid_enrollments from public, anon, authenticated;
 grant select, insert, update, delete on table public.pear_sign_udid_enrollments to service_role;
 
@@ -65,23 +71,32 @@ security definer
 set search_path = ''
 as $$
 declare
-  requested_user_id uuid;
+  enrollment public.pear_sign_udid_enrollments%rowtype;
 begin
   if p_udid is null or p_udid !~ '^([A-F0-9]{40}|[A-F0-9]{8}-[A-F0-9]{16})$' then
     return false;
   end if;
 
-  delete from public.pear_sign_udid_enrollments
+  select * into enrollment
+  from public.pear_sign_udid_enrollments
   where token_hash = p_token_hash and expires_at > now()
-  returning user_id into requested_user_id;
+  for update;
 
-  if requested_user_id is null then
+  if not found then
     return false;
   end if;
 
+  if enrollment.completed_at is not null then
+    return enrollment.completed_udid = p_udid;
+  end if;
+
   insert into public.pear_sign_device_udids (user_id, udid)
-  values (requested_user_id, p_udid)
+  values (enrollment.user_id, p_udid)
   on conflict (user_id) do update set udid = excluded.udid;
+
+  update public.pear_sign_udid_enrollments
+  set completed_udid = p_udid, completed_at = now()
+  where token_hash = p_token_hash;
 
   return true;
 end;

@@ -34,7 +34,7 @@ async function call(t, body, options = {}) {
   });
   const request = Readable.from([body]);
   request.method = "POST";
-  request.url = `/api/udid-callback?token=${options.token ?? token}`;
+  request.url = options.noUrlToken ? "/api/udid-callback" : `/api/udid-callback?token=${options.token ?? token}`;
   request.headers = { host: "pear-sign.com", "content-type": "application/pkcs7-signature" };
   const response = { headers: {}, setHeader(name, value) { this.headers[name] = value; }, end(body) { this.body = body; } };
   await handler(request, response);
@@ -45,7 +45,7 @@ for (const [name, udid] of [["modern", "00008030-001122aabbccddee"], ["legacy", 
   for (const [encoding, encode] of [["XML", xml], ["CMS", cms], ["base64 CMS", (value) => Buffer.from(cms(value).toString("base64"))]]) {
     test(`saves ${name} UDID from ${encoding} and redirects without exposing identifiers`, async (t) => {
       const { response, calls } = await call(t, encode(udid));
-      assert.equal(response.statusCode, 303);
+      assert.equal(response.statusCode, 301);
       assert.equal(response.headers.Location, "https://pear-sign.com/account/?udid=saved");
       assert.equal(calls.length, 1);
       assert.equal(calls[0].body.p_udid, udid.toUpperCase());
@@ -84,5 +84,19 @@ test("invalid enrollment token never reaches storage", async (t) => {
 test("oversized callback is rejected before storage", async (t) => {
   const { response, calls } = await call(t, Buffer.alloc(128 * 1024 + 1));
   assert.equal(response.statusCode, 413);
+  assert.equal(calls.length, 0);
+});
+
+test("Apple's CHALLENGE associates a callback even without a URL token", async (t) => {
+  const body = Buffer.from(`<plist><dict><key>UDID</key><string>00008030-0011223344556677</string><key>CHALLENGE</key><string>${token}</string></dict></plist>`);
+  const { response, calls } = await call(t, body, { noUrlToken: true });
+  assert.equal(response.statusCode, 301);
+  assert.equal(calls.length, 1);
+});
+
+test("a mismatched challenge cannot save a device to the URL token's account", async (t) => {
+  const body = Buffer.from(`<plist><dict><key>UDID</key><string>00008030-0011223344556677</string><key>CHALLENGE</key><string>${"b".repeat(64)}</string></dict></plist>`);
+  const { response, calls } = await call(t, body);
+  assert.equal(response.statusCode, 400);
   assert.equal(calls.length, 0);
 });

@@ -44,20 +44,25 @@ module.exports = async function udidProfile(request, response) {
 			if (!user.id) return json(response, 401, { error: "Sign in to Pearsign first." });
 
 			const token = randomBytes(32).toString("hex");
-			const insertResponse = await supabaseRequest("/rest/v1/pear_sign_udid_enrollments?on_conflict=user_id", {
+			const expiresAt = new Date(Date.now() + 15 * 60 * 1000).toISOString();
+			// Expired requests no longer authorize callbacks. Clear them as new
+			// requests are made so completed device details are not retained forever.
+			const cleanupResponse = await supabaseRequest(`/rest/v1/pear_sign_udid_enrollments?expires_at=lt.${encodeURIComponent(new Date().toISOString())}`, { method: "DELETE" });
+			if (!cleanupResponse.ok) return json(response, 503, { error: "Could not prepare device identification. Please try again." });
+			const insertResponse = await supabaseRequest("/rest/v1/pear_sign_udid_enrollments", {
 				method: "POST",
-				headers: { Prefer: "resolution=merge-duplicates,return=minimal" },
+				headers: { Prefer: "return=minimal" },
 				body: JSON.stringify({
 					token_hash: sha256(token),
 					user_id: user.id,
-					expires_at: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
+					expires_at: expiresAt,
 				}),
 			});
 			if (!insertResponse.ok) return json(response, 503, { error: "Could not start device identification. Check the Supabase setup and try again." });
 
 			const profileURL = new URL("/api/udid-profile", siteURL());
 			profileURL.searchParams.set("token", token);
-			return json(response, 200, { profileUrl: profileURL.toString() });
+			return json(response, 200, { profileUrl: profileURL.toString(), expiresAt });
 		} catch {
 			return json(response, 503, { error: "Pearsign could not reach account services. Please try again." });
 		}
@@ -73,13 +78,18 @@ module.exports = async function udidProfile(request, response) {
 
 	try {
 		const enrollmentURL = new URL(`${supabaseURL()}/rest/v1/pear_sign_udid_enrollments`);
-		enrollmentURL.searchParams.set("select", "token_hash");
+		enrollmentURL.searchParams.set("select", "token_hash,completed_at");
 		enrollmentURL.searchParams.set("token_hash", `eq.${sha256(token)}`);
 		enrollmentURL.searchParams.set("expires_at", `gt.${new Date().toISOString()}`);
 		const checkResponse = await supabaseRequest(`${enrollmentURL.pathname}${enrollmentURL.search}`);
 		if (!checkResponse.ok) return response.status(503).send("Pearsign could not check this request. Please try again later.");
 		const enrollments = await checkResponse.json();
-		if (!enrollments.length) return response.status(410).send("This UDID request has expired or was already used. Start again from your Pearsign account.");
+		if (!enrollments.length) return response.status(410).send("This UDID request has expired. Start again from your Pearsign account.");
+		if (enrollments[0].completed_at) {
+			response.setHeader("Location", new URL("/account/?udid=saved", siteURL()).toString());
+			response.setHeader("Referrer-Policy", "no-referrer");
+			return response.status(301).end();
+		}
 
 		const base = siteURL();
 		const callback = new URL("/api/udid-callback", base);
@@ -89,6 +99,7 @@ module.exports = async function udidProfile(request, response) {
 <plist version="1.0"><dict>
 <key>PayloadContent</key><dict>
   <key>URL</key><string>${callback.toString()}</string>
+  <key>Challenge</key><string>${token}</string>
   <key>DeviceAttributes</key><array><string>UDID</string></array>
 </dict>
 <key>PayloadOrganization</key><string>Pearsign</string>

@@ -15,7 +15,7 @@ async function readRequestBody(request) {
 	return Buffer.concat(chunks);
 }
 
-function extractUdid(text) {
+function extractDeviceResponse(text) {
 	// Apple normally sends a PKCS#7 signed plist. Some delivery paths wrap that
 	// payload in a form field or base64, so look through those common encodings too.
 	const candidates = [text];
@@ -72,7 +72,8 @@ function extractUdid(text) {
 		if (match) {
 			// Newer devices use eight hex characters, a hyphen, then sixteen hex
 			// characters. Preserve that hyphen: it is part of Apple's identifier.
-			return match[1].toUpperCase();
+			const challenge = candidate.match(/<key>\s*CHALLENGE\s*<\/key>\s*<string>\s*([^<]*)\s*<\/string>/i);
+			return { udid: match[1].toUpperCase(), challenge: challenge?.[1].trim() || "" };
 		}
 
 		// A base64-encoded CMS or plist is ASCII in the outer request. Decode only
@@ -110,8 +111,7 @@ module.exports = async function udidCallback(request, response) {
 	}
 
 	const requestURL = new URL(request.url || "/", `https://${request.headers.host || "pear-sign.com"}`);
-	const token = requestURL.searchParams.get("token") || "";
-	if (!/^[a-f0-9]{64}$/.test(token)) return page(response, 400, "Request expired", "Start a new UDID request from your Pearsign account.");
+	const urlToken = requestURL.searchParams.get("token") || "";
 
 	let body;
 	try {
@@ -119,8 +119,14 @@ module.exports = async function udidCallback(request, response) {
 	} catch {
 		return page(response, 413, "Request too large", "The device response could not be processed.");
 	}
-	const udid = extractUdid(body.toString("latin1"));
-	if (!udid) return page(response, 400, "UDID not found", "Apple’s device response could not be read. Start a new request from your Pearsign account and try again in Safari.");
+	const device = extractDeviceResponse(body.toString("latin1"));
+	if (!device) return page(response, 400, "UDID not found", "Apple’s device response could not be read. Start a new request from your Pearsign account and try again in Safari.");
+	// Apple's Profile Service echoes Challenge in the signed device response.
+	// Keep URL-token support for profiles downloaded before this change.
+	const token = urlToken || device.challenge;
+	if (!/^[a-f0-9]{64}$/.test(token) || (device.challenge && device.challenge !== token)) {
+		return page(response, 400, "Invalid request", "Start a new UDID request from your Pearsign account.");
+	}
 
 	try {
 		const completion = await fetch(`${supabaseURL()}/rest/v1/rpc/complete_pear_sign_udid_enrollment`, {
@@ -132,15 +138,16 @@ module.exports = async function udidCallback(request, response) {
 			},
 			body: JSON.stringify({
 				p_token_hash: createHash("sha256").update(token).digest("hex"),
-				p_udid: udid,
+				p_udid: device.udid,
 			}),
 		});
 		if (!completion.ok) return page(response, 503, "Could not save this UDID", "Pearsign could not save the device response. Please start a new request from your account.");
 		const saved = await completion.json();
-		if (saved !== true) return page(response, 410, "Request expired", "This one-time UDID request has expired or was already used. Start a new one from your Pearsign account.");
+		if (saved !== true) return page(response, 410, "Request no longer valid", "This request has expired or does not match the device that completed it. Start a new request from your Pearsign account.");
 		// Finish the Profile Service exchange by returning to Safari with a GET.
 		// A 200 HTML response here can be mistaken for another configuration profile.
-		response.statusCode = 303;
+		// Match the Profile Service -> Safari handoff used by udid.tech.
+		response.statusCode = 301;
 		response.setHeader("Location", new URL("/account/?udid=saved", process.env.PEARSIGN_SITE_URL || "https://pear-sign.com").toString());
 		response.setHeader("Referrer-Policy", "no-referrer");
 		return response.end();
